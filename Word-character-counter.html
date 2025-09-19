@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter | Multi-Tool Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0074e4, #00a2ff);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: #0074e4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .tool-container {
+            padding: 25px;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #0074e4;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0074e4;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #0074e4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005bb9;
+        }
+        
+        .btn-secondary {
+            background: #e6f2ff;
+            color: #0074e4;
+        }
+        
+        .btn-secondary:hover {
+            background: #cce5ff;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Word Counter Tool</h1>
+            <p class="description">Analyze your text in real-time with our word counter</p>
+        </header>
+        
+        <div class="tool-container">
+            <div class="input-section">
+                <h2>Paste or Type Your Text</h2>
+                <textarea id="inputText" placeholder="Start typing or paste your text here..." autofocus></textarea>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="wordCount">0</div>
+                    <div class="stat-label">Words</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="charCount">0</div>
+                    <div class="stat-label">Characters</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="charNoSpacesCount">0</div>
+                    <div class="stat-label">Characters (no spaces)</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="sentenceCount">0</div>
+                    <div class="stat-label">Sentences</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="paragraphCount">0</div>
+                    <div class="stat-label">Paragraphs</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value" id="readingTime">0s</div>
+                    <div class="stat-label">Reading Time</div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="copyText()">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+                <button class="btn btn-secondary" onclick="clearText()">
+                    <i class="fas fa-broom"></i> Clear Text
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Word Counter Tool | Part of Multi-Tool Website</p>
+        <p>© 2023 Multi-Tool Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const inputTextarea = document.getElementById('inputText');
+        const wordCountEl = document.getElementById('wordCount');
+        const charCountEl = document.getElementById('charCount');
+        const charNoSpacesCountEl = document.getElementById('charNoSpacesCount');
+        const sentenceCountEl = document.getElementById('sentenceCount');
+        const paragraphCountEl = document.getElementById('paragraphCount');
+        const readingTimeEl = document.getElementById('readingTime');
+        
+        // Update statistics in real-time
+        inputTextarea.addEventListener('input', updateStatistics);
+        
+        function updateStatistics() {
+            const text = inputTextarea.value;
+            
+            // Word count (split by spaces and filter out empty strings)
+            const wordCount = text.trim() ? text.split(/\s+/).length : 0;
+            
+            // Character count
+            const charCount = text.length;
+            
+            // Character count without spaces
+            const charNoSpacesCount = text.replace(/\s/g, '').length;
+            
+            // Sentence count (split by . ! ? followed by space or end of string)
+            const sentenceCount = text.trim() ? text.split(/[.!?]+(\s|$)/).filter(s => s.length > 1).length : 0;
+            
+            // Paragraph count (split by two or more newlines)
+            const paragraphCount = text.trim() ? text.split(/\n\s*\n/).length : 0;
+            
+            // Reading time (assuming 225 words per minute)
+            const readingTime = Math.ceil(wordCount / 225 * 60);
+            const readingTimeDisplay = readingTime < 60 ? `${readingTime}s` : `${Math.ceil(readingTime / 60)}min`;
+            
+            // Update the DOM
+            wordCountEl.textContent = wordCount.toLocaleString();
+            charCountEl.textContent = charCount.toLocaleString();
+            charNoSpacesCountEl.textContent = charNoSpacesCount.toLocaleString();
+            sentenceCountEl.textContent = sentenceCount.toLocaleString();
+            paragraphCountEl.textContent = paragraphCount.toLocaleString();
+            readingTimeEl.textContent = readingTimeDisplay;
+        }
+        
+        function clearText() {
+            inputTextarea.value = '';
+            updateStatistics();
+            inputTextarea.focus();
+        }
+        
+        function copyText() {
+            if (!inputTextarea.value) return;
+            
+            inputTextarea.select();
+            document.execCommand('copy');
+            
+            // Visual feedback
+            const copyBtn = document.querySelector('.btn-primary');
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        }
+        
+        // Initialize statistics on page load
+        updateStatistics();
+    </script>
+</body>
+</html>
