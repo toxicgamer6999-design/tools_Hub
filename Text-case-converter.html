@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Case Converter | Multi-Tool Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0074e4, #00a2ff);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: #0074e4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .tool-container {
+            padding: 25px;
+        }
+        
+        .input-section, .output-section {
+            margin-bottom: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #0074e4;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #0074e4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005bb9;
+        }
+        
+        .btn-secondary {
+            background: #e6f2ff;
+            color: #0074e4;
+        }
+        
+        .btn-secondary:hover {
+            background: #cce5ff;
+        }
+        
+        .btn-success {
+            background: #00cc88;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #00b377;
+        }
+        
+        .output-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .case-info {
+            background: #f0f8ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #0074e4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .output-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        .char-count {
+            text-align: right;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Text Case Converter</h1>
+            <p class="description">Easily convert text between different cases with our simple tool</p>
+        </header>
+        
+        <div class="tool-container">
+            <div class="input-section">
+                <h2>Input Text</h2>
+                <textarea id="inputText" placeholder="Type or paste your text here..." autofocus></textarea>
+                <div class="char-count">Character count: <span id="inputCount">0</span></div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="convertCase('upper')">
+                    <i class="fas fa-text-height"></i> UPPERCASE
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('lower')">
+                    <i class="fas fa-text-height"></i> lowercase
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('title')">
+                    <i class="fas fa-heading"></i> Title Case
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('sentence')">
+                    <i class="fas fa-i-cursor"></i> Sentence case
+                </button>
+                <button class="btn btn-primary" onclick="convertCase('toggle')">
+                    <i class="fas fa-sync-alt"></i> tOGGLE cASE
+                </button>
+                <button class="btn btn-secondary" onclick="clearText()">
+                    <i class="fas fa-broom"></i> Clear
+                </button>
+            </div>
+            
+            <div class="output-section">
+                <h2>Converted Text</h2>
+                <textarea id="outputText" readonly placeholder="Your converted text will appear here..."></textarea>
+                <div class="char-count">Character count: <span id="outputCount">0</span></div>
+                
+                <div class="output-actions">
+                    <div class="case-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="currentCase">No conversion performed yet</span>
+                    </div>
+                    <button class="btn btn-success" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Text Case Converter Tool | Part of Multi-Tool Website</p>
+        <p>© 2023 Multi-Tool Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const inputTextarea = document.getElementById('inputText');
+        const outputTextarea = document.getElementById('outputText');
+        const inputCount = document.getElementById('inputCount');
+        const outputCount = document.getElementById('outputCount');
+        const currentCase = document.getElementById('currentCase');
+        
+        // Update character count
+        inputTextarea.addEventListener('input', function() {
+            inputCount.textContent = this.value.length;
+        });
+        
+        // Conversion functions
+        function convertCase(caseType) {
+            const text = inputTextarea.value;
+            if (!text.trim()) {
+                outputTextarea.value = '';
+                outputCount.textContent = '0';
+                currentCase.textContent = 'No text to convert';
+                return;
+            }
+            
+            let convertedText = '';
+            let caseName = '';
+            
+            switch(caseType) {
+                case 'upper':
+                    convertedText = text.toUpperCase();
+                    caseName = 'UPPERCASE';
+                    break;
+                case 'lower':
+                    convertedText = text.toLowerCase();
+                    caseName = 'lowercase';
+                    break;
+                case 'title':
+                    convertedText = toTitleCase(text);
+                    caseName = 'Title Case';
+                    break;
+                case 'sentence':
+                    convertedText = toSentenceCase(text);
+                    caseName = 'Sentence case';
+                    break;
+                case 'toggle':
+                    convertedText = toggleCase(text);
+                    caseName = 'tOGGLE cASE';
+                    break;
+            }
+            
+            outputTextarea.value = convertedText;
+            outputCount.textContent = convertedText.length;
+            currentCase.textContent = caseName;
+        }
+        
+        function toTitleCase(text) {
+            return text.toLowerCase().split(' ').map(word => {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }).join(' ');
+        }
+        
+        function toSentenceCase(text) {
+            return text.toLowerCase().split('. ').map(sentence => {
+                return sentence.charAt(0).toUpperCase() + sentence.slice(1);
+            }).join('. ');
+        }
+        
+        function toggleCase(text) {
+            return text.split('').map(char => {
+                return char === char.toUpperCase() ? 
+                    char.toLowerCase() : char.toUpperCase();
+            }).join('');
+        }
+        
+        function clearText() {
+            inputTextarea.value = '';
+            outputTextarea.value = '';
+            inputCount.textContent = '0';
+            outputCount.textContent = '0';
+            currentCase.textContent = 'No conversion performed yet';
+            inputTextarea.focus();
+        }
+        
+        function copyToClipboard() {
+            if (!outputTextarea.value) return;
+            
+            outputTextarea.select();
+            document.execCommand('copy');
+            
+            // Visual feedback
+            const copyBtn = document.querySelector('.btn-success');
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
