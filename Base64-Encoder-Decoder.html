@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder/Decoder | Multi-Tool Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0074e4 0%, #00a2ff 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: #0074e4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tool-container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #0074e4;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 1rem;
+            line-height: 1.5;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            border-color: #0074e4;
+            outline: none;
+        }
+        
+        .input-textarea {
+            background: #f9f9f9;
+        }
+        
+        .output-textarea {
+            background: #f0f8ff;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-encode {
+            background: #0074e4;
+            color: white;
+        }
+        
+        .btn-encode:hover {
+            background: #005bb9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-decode {
+            background: #00a2ff;
+            color: white;
+        }
+        
+        .btn-decode:hover {
+            background: #0085d4;
+            transform: translateY(-2px);
+        }
+        
+        .btn-clear {
+            background: #66c2ff;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #4cb0ff;
+            transform: translateY(-2px);
+        }
+        
+        .btn-copy {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .btn-copy:hover {
+            background: #ff4c4c;
+            transform: translateY(-2px);
+        }
+        
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .toggle-btn {
+            padding: 10px 20px;
+            background: #e6f3ff;
+            border: 2px solid #0074e4;
+            border-radius: 25px;
+            color: #0074e4;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn.active {
+            background: #0074e4;
+            color: white;
+        }
+        
+        .stats {
+            text-align: center;
+            padding: 15px;
+            background: #e6f3ff;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #0074e4;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .tool-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Animation for button clicks */
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        button:active {
+            animation: buttonClick 0.2s;
+        }
+        
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Base64 Encoder/Decoder</h1>
+            <p class="description">Easily encode text to Base64 or decode Base64 back to plain text</p>
+        </header>
+        
+        <div class="mode-toggle">
+            <button id="encodeMode" class="toggle-btn active">Encode</button>
+            <button id="decodeMode" class="toggle-btn">Decode</button>
+        </div>
+        
+        <div class="tool-container">
+            <div class="input-section">
+                <div class="section-title">
+                    <i class="fas fa-pen"></i> Input Text
+                </div>
+                <textarea class="input-textarea" id="inputText" placeholder="Enter text to encode or Base64 to decode..."></textarea>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-title">
+                    <i class="fas fa-file-code"></i> Output Text
+                </div>
+                <textarea class="output-textarea" id="outputText" placeholder="Results will appear here..." readonly></textarea>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn-encode" id="encodeBtn">
+                <i class="fas fa-lock"></i> Encode to Base64
+            </button>
+            <button class="btn-decode" id="decodeBtn">
+                <i class="fas fa-lock-open"></i> Decode from Base64
+            </button>
+            <button class="btn-clear" id="clearBtn">
+                <i class="fas fa-broom"></i> Clear
+            </button>
+            <button class="btn-copy" id="copyBtn">
+                <i class="fas fa-copy"></i> Copy Output
+            </button>
+        </div>
+        
+        <div class="stats">
+            <p>Input Length: <span class="stat-value" id="inputLength">0</span> | 
+               Output Length: <span class="stat-value" id="outputLength">0</span> | 
+               Processing Time: <span class="stat-value" id="processingTime">0ms</span></p>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <footer>
+        <p>© 2023 Multi-Tool Website | Part of our encoding utility collection</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputTextarea = document.getElementById('inputText');
+            const outputTextarea = document.getElementById('outputText');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const encodeModeBtn = document.getElementById('encodeMode');
+            const decodeModeBtn = document.getElementById('decodeMode');
+            const inputLengthEl = document.getElementById('inputLength');
+            const outputLengthEl = document.getElementById('outputLength');
+            const processingTimeEl = document.getElementById('processingTime');
+            const toast = document.getElementById('toast');
+            
+            let currentMode = 'encode';
+            
+            // Update input length on input
+            inputTextarea.addEventListener('input', updateStats);
+            
+            // Set mode
+            encodeModeBtn.addEventListener('click', () => setMode('encode'));
+            decodeModeBtn.addEventListener('click', () => setMode('decode'));
+            
+            // Encode button click
+            encodeBtn.addEventListener('click', encodeText);
+            
+            // Decode button click
+            decodeBtn.addEventListener('click', decodeText);
+            
+            // Clear button click
+            clearBtn.addEventListener('click', clearText);
+            
+            // Copy output button click
+            copyBtn.addEventListener('click', copyOutput);
+            
+            function setMode(mode) {
+                currentMode = mode;
+                if (mode === 'encode') {
+                    encodeModeBtn.classList.add('active');
+                    decodeModeBtn.classList.remove('active');
+                    inputTextarea.placeholder = 'Enter text to encode to Base64...';
+                } else {
+                    decodeModeBtn.classList.add('active');
+                    encodeModeBtn.classList.remove('active');
+                    inputTextarea.placeholder = 'Enter Base64 to decode to text...';
+                }
+                // Auto-process if there's input text
+                if (inputTextarea.value.trim()) {
+                    if (mode === 'encode') {
+                        encodeText();
+                    } else {
+                        decodeText();
+                    }
+                }
+            }
+            
+            function updateStats() {
+                inputLengthEl.textContent = inputTextarea.value.length;
+            }
+            
+            function encodeText() {
+                const inputText = inputTextarea.value;
+                if (!inputText.trim()) {
+                    showToast('Please enter some text to encode');
+                    return;
+                }
+                
+                const startTime = performance.now();
+                
+                try {
+                    // Base64 encoding
+                    const encodedText = btoa(unescape(encodeURIComponent(inputText)));
+                    outputTextarea.value = encodedText;
+                    
+                    const endTime = performance.now();
+                    processingTimeEl.textContent = `${Math.round(endTime - startTime)}ms`;
+                    outputLengthEl.textContent = encodedText.length;
+                    
+                    showToast('Text encoded successfully!');
+                } catch (error) {
+                    showToast('Error encoding text');
+                    console.error(error);
+                }
+            }
+            
+            function decodeText() {
+                const inputText = inputTextarea.value;
+                if (!inputText.trim()) {
+                    showToast('Please enter Base64 to decode');
+                    return;
+                }
+                
+                const startTime = performance.now();
+                
+                try {
+                    // Base64 decoding
+                    const decodedText = decodeURIComponent(escape(atob(inputText)));
+                    outputTextarea.value = decodedText;
+                    
+                    const endTime = performance.now();
+                    processingTimeEl.textContent = `${Math.round(endTime - startTime)}ms`;
+                    outputLengthEl.textContent = decodedText.length;
+                    
+                    showToast('Base64 decoded successfully!');
+                } catch (error) {
+                    showToast('Error decoding Base64 - invalid format?');
+                    console.error(error);
+                }
+            }
+            
+            function clearText() {
+                inputTextarea.value = '';
+                outputTextarea.value = '';
+                inputLengthEl.textContent = '0';
+                outputLengthEl.textContent = '0';
+                processingTimeEl.textContent = '0ms';
+                showToast('Cleared all text');
+            }
+            
+            function copyOutput() {
+                if (!outputTextarea.value.trim()) {
+                    showToast('No output to copy');
+                    return;
+                }
+                
+                outputTextarea.select();
+                document.execCommand('copy');
+                showToast('Output copied to clipboard!');
+            }
+            
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Initialize stats
+            updateStats();
+        });
+    </script>
+</body>
+</html>
