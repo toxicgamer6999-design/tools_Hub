@@ -1,5 +1,4 @@
-  
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5006207296827938"
@@ -14,6 +13,28 @@
       margin: 0;
       padding: 20px;
       text-align: center;
+    }
+
+    /* Ad banner styles */
+    #adBanner {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 20px auto;
+      padding: 10px 0;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* Add transition for fade-in effect */
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    #adBanner.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .container {
@@ -69,6 +90,21 @@
   </style>
 </head>
 <body>
+  <!-- Ad banner container -->
+  <div id="adBanner">
+    <!-- Replace this with your actual ad code -->
+    <!-- Example Google AdSense Banner -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- Banner Ad -->
+    <ins class="adsbygoogle"
+         style="display:inline-block; width:728px; height:90px;"
+         data-ad-client="ca-pub-5006207296827938"
+         data-ad-slot="1234567890"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
   <div class="container">
     <h2>Barcode Generator</h2>
     <input type="text" id="barcodeText" placeholder="Enter text or number" />
@@ -82,6 +118,11 @@
   <!-- JsBarcode CDN -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
+    // Show ad with fade-in effect
+    window.addEventListener('load', () => {
+      document.getElementById('adBanner').classList.add('show');
+    });
+
     function generateBarcode() {
       const text = document.getElementById("barcodeText").value.trim();
       const downloadBtn = document.getElementById("downloadBtn");
@@ -117,5 +158,3 @@
   </script>
 </body>
 </html>
-
-  
